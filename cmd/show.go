@@ -34,6 +34,8 @@ import (
 const BaseUrl string = "https://api.weatherapi.com/v1"
 const CurrentWeather string = "/current.json"
 
+var City string
+
 type CurrentResponse struct {
 	Location Location
 	Current  Current
@@ -112,15 +114,17 @@ var showCmd = &cobra.Command{
 	Short: "A brief description of your command",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:`,
+	Args: cobra.MinimumNArgs(0),
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("show called")
+		fmt.Println(City)
 		GetCurrentWeather()
 	},
 }
 
 func init() {
+	showCmd.Flags().StringVarP(&City, "city", "c", "", "City name to get weather")
 	rootCmd.AddCommand(showCmd)
-
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
