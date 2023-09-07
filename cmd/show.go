@@ -32,9 +32,10 @@ import (
 )
 
 const BaseUrl string = "https://api.weatherapi.com/v1"
-const CurrentWeather string = "/current.json"
+const CurrentWeatherUrl string = "/current.json"
 
 var City string
+var Lang string
 
 type CurrentResponse struct {
 	Location Location
@@ -82,10 +83,18 @@ type Condition struct {
 	Code int16
 }
 
-func GetCurrentWeather() {
-	var current_response CurrentResponse
+func GetCurrentWeather(cityName string, lang string) {
+	if cityName == "" {
+		cityName = "Kyiv"
+	}
+
+	if lang == "" {
+		lang = "uk"
+	}
+
+	var currentResponse CurrentResponse
 	ApiKey := viper.GetString("API_KEY")
-	url := BaseUrl + CurrentWeather + "?key=" + ApiKey + "&q=Kiev&aqi=no&lang=uk"
+	url := BaseUrl + CurrentWeatherUrl + "?key=" + ApiKey + "&q=" + cityName + "&lang=" + lang
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		fmt.Printf("Could not create request: %s\n", err)
@@ -103,35 +112,27 @@ func GetCurrentWeather() {
 		os.Exit(1)
 	}
 
-	//fmt.Printf(string(body))
-	json.Unmarshal(body, &current_response)
-	fmt.Println(current_response.Current)
+	err = json.Unmarshal(body, &currentResponse)
+	if err != nil {
+		fmt.Printf("Could not read unmarshall JSON: %s\n", err)
+	}
+	fmt.Println(currentResponse.Location)
+	fmt.Println(currentResponse.Current)
 }
 
 // showCmd represents the show command
 var showCmd = &cobra.Command{
 	Use:   "show",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:`,
-	Args: cobra.MinimumNArgs(0),
+	Short: "Show current weather information",
+	Long:  `Show a user up-to-date current weather information in the desired location.`,
+	Args:  cobra.ArbitraryArgs,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("show called")
-		fmt.Println(City)
-		GetCurrentWeather()
+		GetCurrentWeather(City, Lang)
 	},
 }
 
 func init() {
-	showCmd.Flags().StringVarP(&City, "city", "c", "", "City name to get weather")
+	showCmd.Flags().StringVarP(&City, "city", "c", "", "City name e.g.: Paris")
+	showCmd.Flags().StringVarP(&Lang, "lang", "l", "", "Returns 'condition:text' in the desired language")
 	rootCmd.AddCommand(showCmd)
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// showCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// showCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
