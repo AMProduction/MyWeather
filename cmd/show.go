@@ -43,6 +43,7 @@ type CurrentResponse struct {
 	Current  Current
 }
 
+// Test string
 type Location struct {
 	Name            string
 	Region          string
