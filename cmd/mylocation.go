@@ -80,7 +80,13 @@ func getIPInfo(ip string) {
 	if err != nil {
 		fmt.Printf("Could not read unmarshall JSON: %s\n", err)
 	}
-	fmt.Println(ipResponse)
+	fmt.Println("IP address: " + ipResponse.Ip)
+	fmt.Println("Continent name: " + ipResponse.ContinentName)
+	fmt.Println("Name of country: " + ipResponse.CountryName)
+	fmt.Println("City name: " + ipResponse.City)
+	fmt.Println("Region name: " + ipResponse.Region)
+	fmt.Println("Time zone: " + ipResponse.TzId)
+	fmt.Println("Position: lat " + fmt.Sprintf("%f", ipResponse.Lat) + " lan " + fmt.Sprintf("%f", ipResponse.Lon))
 }
 
 // mylocationCmd represents the mylocation command
@@ -90,7 +96,6 @@ var mylocationCmd = &cobra.Command{
 	Long:  `Show the geo info about your location by your IP or any.`,
 	Args:  cobra.ArbitraryArgs,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("mylocation called")
 		getIPInfo(IP)
 	},
 }

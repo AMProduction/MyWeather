@@ -29,6 +29,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strconv"
 )
 
 const BaseUrl string = "https://api.weatherapi.com/v1"
@@ -116,8 +117,24 @@ func GetCurrentWeather(cityName string, lang string) {
 	if err != nil {
 		fmt.Printf("Could not read unmarshall JSON: %s\n", err)
 	}
-	fmt.Println(currentResponse.Location)
-	fmt.Println(currentResponse.Current)
+	fmt.Println("The current weather in " + currentResponse.Location.Name)
+	fmt.Println("Region name: " + currentResponse.Location.Region)
+	fmt.Println("Name of country: " + currentResponse.Location.Country)
+	fmt.Println("Local date and time: " + currentResponse.Location.Localtime)
+	fmt.Println("Time zone: " + currentResponse.Location.Tz_id)
+	fmt.Println("Position: lat " + fmt.Sprintf("%f", currentResponse.Location.Lat) + " lan " + fmt.Sprintf("%f", currentResponse.Location.Lon))
+	fmt.Println(`_____________________________________________`)
+	fmt.Println("Temperature in celsius: " + fmt.Sprintf("%.1f", currentResponse.Current.Temp_c))
+	fmt.Println("Feels like: " + fmt.Sprintf("%.1f", currentResponse.Current.Feelslike_c))
+	fmt.Println("Weather condition: " + currentResponse.Current.Condition.Text)
+	fmt.Println("Wind speed: " + fmt.Sprintf("%.2f", currentResponse.Current.Wind_kph) + "km/h")
+	fmt.Println("Wind direction: " + currentResponse.Current.Wind_dir)
+	fmt.Println("Precipitation amount: " + fmt.Sprintf("%.2f", currentResponse.Current.Precip_mm) + "mm")
+	fmt.Println("Humidity: " + strconv.Itoa(currentResponse.Current.Humidity) + "%")
+	fmt.Println("Cloud cover: " + strconv.Itoa(currentResponse.Current.Cloud) + "%")
+	fmt.Println("UV Index: " + fmt.Sprintf("%.2f", currentResponse.Current.Uv))
+	fmt.Println(`_____________________________________________`)
+	fmt.Println("The weather updated at: " + currentResponse.Current.Last_updated)
 }
 
 // showCmd represents the show command
