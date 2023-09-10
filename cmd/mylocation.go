@@ -26,6 +26,7 @@ import (
 	"fmt"
 	"github.com/spf13/viper"
 	"io"
+	"net"
 	"net/http"
 	"os"
 
@@ -56,7 +57,13 @@ func getIPInfo(ip string) {
 	if ip == "" {
 		ip = "auto:ip"
 	}
+
+	if net.ParseIP(ip) == nil {
+		fmt.Printf("IP Address: %s - Invalid\n", ip)
+		os.Exit(1)
+	}
 	var ipResponse IPInfo
+
 	ApiKey := viper.GetString("API_KEY")
 	url := BaseUrl + IPLookupUrl + "?key=" + ApiKey + "&q=" + ip
 	req, err := http.NewRequest("GET", url, nil)
